@@ -7,6 +7,8 @@
 	<groupId>com.aashayein</groupId>
 	<artifactId>config-server</artifactId>
 	<version>V-1.0</version>
+	<packaging>jar</packaging>
+
 	<name>config-server</name>
 	<description>Config Server</description>
 
@@ -28,10 +30,6 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-config-server</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
 
 		<dependency>
@@ -60,6 +58,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<finalName>config-server</finalName>
 	</build>
 
 </project>

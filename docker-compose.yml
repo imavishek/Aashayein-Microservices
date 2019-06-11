@@ -1,0 +1,62 @@
+version: '3'
+
+services:
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: 'rabbitmq:management'
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "8055:5672"
+
+  config-server:
+    container_name: config-server
+    build:
+      context: ./config-server
+      dockerfile: Dockerfile
+    ports:
+      - "8051:8051"
+    depends_on:
+      - rabbitmq
+
+  eureka-server:
+    container_name: eureka-server
+    build:
+      context: ./eureka-server
+      dockerfile: Dockerfile
+    ports:
+      - "8050:8050"
+    depends_on:
+      - config-server
+
+  zuul-gateway:
+    container_name: zuul-gateway
+    build:
+      context: ./zuul-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8052:8052"
+    depends_on:
+      - config-server
+      - eureka-server
+
+  hystrix-dashboard:
+    container_name: hystrix-dashboard
+    build:
+      context: ./hystrix-dashboard
+      dockerfile: Dockerfile
+    ports:
+      - "8053:8053"
+    depends_on:
+      - config-server
+      - eureka-server
+
+  zipkin-server:
+    container_name: zipkin-server
+    image: 'openzipkin/zipkin'
+    environment:
+      - STORAGE_TYPE=mem
+    ports:
+      - "8054:9411"

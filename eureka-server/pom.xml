@@ -7,6 +7,8 @@
 	<groupId>com.aashayein</groupId>
 	<artifactId>eureka-server</artifactId>
 	<version>V-1.0</version>
+	<packaging>jar</packaging>
+
 	<name>eureka-server</name>
 	<description>Eureka Server / Discovery Server</description>
 
@@ -64,6 +66,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<finalName>eureka-server</finalName>
 	</build>
 
 </project>

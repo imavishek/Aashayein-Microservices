@@ -7,6 +7,8 @@
 	<groupId>com.aashayein</groupId>
 	<artifactId>zuul-gateway</artifactId>
 	<version>V-1.0</version>
+	<packaging>jar</packaging>
+
 	<name>zuul-gateway</name>
 	<description>Zuul Gateway</description>
 
@@ -68,6 +70,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<finalName>zuul-gateway</finalName>
 	</build>
 
 </project>
