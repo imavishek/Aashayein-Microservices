@@ -26,6 +26,9 @@ public class EmployeeController {
 	@Autowired
 	EmployeeService employeeService;
 
+	// private static final Logger log =
+	// LoggerFactory.getLogger(EmployeeController.class);
+
 	@GetMapping(value = "/getEmployees")
 	public List<EmployeeTO> getEmployees() {
 
@@ -34,8 +37,4 @@ public class EmployeeController {
 		return employees;
 	}
 
-	@GetMapping(value = "/aaa")
-	public String getEmployeess() {
-		return "fff";
-	}
 }

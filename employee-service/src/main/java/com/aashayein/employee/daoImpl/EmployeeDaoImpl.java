@@ -12,13 +12,11 @@ package com.aashayein.employee.daoImpl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.aashayein.employee.dao.EmployeeDao;
 import com.aashayein.employee.entities.Employee;
 import com.aashayein.employee.repository.EmployeeRepository;
 
-@Component
 public class EmployeeDaoImpl implements EmployeeDao {
 
 	@Autowired

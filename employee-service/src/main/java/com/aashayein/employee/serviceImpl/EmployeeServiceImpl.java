@@ -11,28 +11,30 @@ package com.aashayein.employee.serviceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.aashayein.employee.dao.EmployeeDao;
 import com.aashayein.employee.dto.EmployeeTO;
 import com.aashayein.employee.entities.Employee;
+import com.aashayein.employee.repository.EmployeeRepository;
 import com.aashayein.employee.service.EmployeeService;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
 	@Autowired
-	private EmployeeDao employeeDao;
+	private EmployeeRepository employeeRepository;
 
 	@Override
 	@Transactional
 	public List<EmployeeTO> getAllEmployees() {
+
 		List<EmployeeTO> employees = new ArrayList<EmployeeTO>();
 
-		List<Employee> employee = employeeDao.getAllEmployees();
+		List<Employee> employee = employeeRepository.findByOrderByRecordCreatedDesc();
 
 		if (!employee.isEmpty()) {
 			for (Employee emp : employee) {
@@ -76,6 +78,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Override
 	@Transactional
 	public EmployeeTO getEmployeeById(Integer employeeId) {
+		
+		EmployeeTO employee = null;
+		
+		Optional<Employee> emp = employeeRepository.findById(employeeId);
 		return null;
 	}
 

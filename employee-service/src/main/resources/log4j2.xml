@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+	<Properties>
+		<Property name="BASE_PATH">logs</Property>
+		<Property name="LOG_PATTERN">
+			[%-5level] %d{dd-MM-yyyy HH:mm:ss} [TraceId: %X{traceId}] [SpanId: %X{spanId}] [ParentSpanId: %X{X-B3-ParentSpanId}] [Span-Export: %X{X-Span-Export}] [%t] [%c{1}]  %msg%n
+			<!-- [%-5level] [TraceId: %X{X-B3-TraceId}] [SpanId: %X{X-B3-SpanId}] [ParentSpanId: %X{X-B3-ParentSpanId}] [Span-Export: %X{X-Span-Export}] %d{dd-MM-yyyy HH:mm:ss} [%c{1}]  %msg%n -->
+		</Property>
+	</Properties>
+	<Appenders>
+
+		<!-- Console Appender -->
+		<Console name="ConsoleAppender" target="SYSTEM_OUT">
+			<PatternLayout pattern="${LOG_PATTERN}"/>
+		</Console>
+
+		<!-- Rolling File Appender -->
+		<RollingFile name="FileAppender" fileName="${BASE_PATH}/application.log" filePattern="${BASE_PATH}/application-%d{dd-MM-yyyy}.log">
+			<PatternLayout>
+				<Pattern>${LOG_PATTERN}</Pattern>
+			</PatternLayout>
+			<Policies>
+				<!-- rollover on startup -->
+				<!-- <OnStartupTriggeringPolicy /> -->
+				<!-- rollover when the file reaches 10 MegaBytes -->
+				<SizeBasedTriggeringPolicy size="10 MB" />
+				<!-- roll files over every week -->
+				<TimeBasedTriggeringPolicy interval="7" />
+			</Policies>
+			<!-- specifies the maximum number of log files that will be kept. -->
+			<DefaultRolloverStrategy max="10"/>
+		</RollingFile>
+
+		<!-- SMTP Appender -->
+		<SMTP name="MailAppender"
+				subject="Aashayein - Logging"
+				to="avi060796@gmail.com"
+				from="aashayein2019@gmail.com"
+				smtpHost="smtp.gmail.com"
+				smtpPort="587"
+				smtpUsername="aashayein2019@gmail.com"
+				smtpPassword="8908904383"
+				bufferSize="1">
+			<ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+			<PatternLayout>
+				<Pattern>${LOG_PATTERN}</Pattern>
+			</PatternLayout>
+		</SMTP>
+	</Appenders>
+
+	<Loggers>
+		<!-- LOG "org.avishek.aashayein.*" at DEBUG level -->
+		<Logger name="org.avishek.aashayein" level="debug" additivity="true">
+			<AppenderRef ref="ConsoleAppender" />
+			<AppenderRef ref="FileAppender" />
+		</Logger>
+		<!-- LOG everything at INFO level -->
+		<Root level="info" additivity="false">
+			<AppenderRef ref="ConsoleAppender" />
+			<AppenderRef ref="FileAppender" />
+		</Root>
+	</Loggers>
+</Configuration>
