@@ -60,3 +60,13 @@ services:
       - STORAGE_TYPE=mem
     ports:
       - "8054:9411"
+
+  employee-service:
+    container_name: employee-service
+    build:
+      context: ./employee-service
+      dockerfile: Dockerfile
+    ports:
+      - "8060:8060"
+    depends_on:
+      - config-server

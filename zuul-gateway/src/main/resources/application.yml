@@ -2,11 +2,7 @@ zuul:
   prefix: "/api"
   ignoredServices: '*'
   routes:
-    aashayein-sales:
-      path: /sales-service/**
-      service-id: aashayein-sales
-      strip-prefix: false
-    aashayein-admin:
-      path: /admin-service/**
-      service-id: aashayein-admin
+    employee-service:
+      path: /employee-service/**
+      service-id: employee-service
       strip-prefix: false

@@ -3,7 +3,7 @@
 	<Properties>
 		<Property name="BASE_PATH">logs</Property>
 		<Property name="LOG_PATTERN">
-			[%-5level] %d{dd-MM-yyyy HH:mm:ss} [TraceId: %X{traceId}] [SpanId: %X{spanId}] [ParentSpanId: %X{X-B3-ParentSpanId}] [Span-Export: %X{X-Span-Export}] [%t] [%c{1}]  %msg%n
+			[%-5level] %d{dd-MM-yyyy HH:mm:ss} [TraceId: %X{traceId}] [SpanId: %X{spanId}] [ParentSpanId: %X{X-B3-ParentSpanId}] [Span-Export: %X{X-Span-Export}] [%c{1}]  %msg%n
 			<!-- [%-5level] [TraceId: %X{X-B3-TraceId}] [SpanId: %X{X-B3-SpanId}] [ParentSpanId: %X{X-B3-ParentSpanId}] [Span-Export: %X{X-Span-Export}] %d{dd-MM-yyyy HH:mm:ss} [%c{1}]  %msg%n -->
 		</Property>
 	</Properties>
@@ -15,7 +15,7 @@
 		</Console>
 
 		<!-- Rolling File Appender -->
-		<RollingFile name="FileAppender" fileName="${BASE_PATH}/application.log" filePattern="${BASE_PATH}/application-%d{dd-MM-yyyy}.log">
+		<RollingFile name="FileAppender" fileName="${BASE_PATH}/application.log" filePattern="${BASE_PATH}/$${date:dd-MM-yyyy}/application-%d{dd-MM-yyyy}.log.gz">
 			<PatternLayout>
 				<Pattern>${LOG_PATTERN}</Pattern>
 			</PatternLayout>
@@ -40,6 +40,9 @@
 				smtpPort="587"
 				smtpUsername="aashayein2019@gmail.com"
 				smtpPassword="8908904383"
+				smtpProtocol="smtp"
+				smtpDebug="true"
+				ignoreExceptions="false"
 				bufferSize="1">
 			<ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
 			<PatternLayout>
@@ -58,6 +61,7 @@
 		<Root level="info" additivity="false">
 			<AppenderRef ref="ConsoleAppender" />
 			<AppenderRef ref="FileAppender" />
+			<!-- <AppenderRef ref="MailAppender" /> -->
 		</Root>
 	</Loggers>
 </Configuration>

@@ -23,4 +23,5 @@ public class SpringConfiguration {
 	public RestTemplate restTemplate() {
 		return new RestTemplate();
 	}
+
 }
