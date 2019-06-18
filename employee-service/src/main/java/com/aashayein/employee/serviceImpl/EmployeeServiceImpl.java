@@ -11,7 +11,6 @@ package com.aashayein.employee.serviceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,10 +77,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Override
 	@Transactional
 	public EmployeeTO getEmployeeById(Integer employeeId) {
-		
-		EmployeeTO employee = null;
-		
-		Optional<Employee> emp = employeeRepository.findById(employeeId);
 		return null;
 	}
 

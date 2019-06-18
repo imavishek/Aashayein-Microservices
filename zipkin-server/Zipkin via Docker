@@ -1,6 +1,6 @@
 Start Zipkin via Docker
 -----------------------
 
-docker run -d -p 9411:9411 openzipkin/zipkin
+docker run -d -p 8054:9411 openzipkin/zipkin
 
-http://your_host:9411/zipkin/
+http://your_host:8054/zipkin/

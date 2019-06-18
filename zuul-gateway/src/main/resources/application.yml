@@ -5,4 +5,4 @@ zuul:
     employee-service:
       path: /employee-service/**
       service-id: employee-service
-      strip-prefix: false
+      strip-prefix: true
