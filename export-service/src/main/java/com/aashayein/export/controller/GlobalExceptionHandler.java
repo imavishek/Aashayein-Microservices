@@ -1,13 +1,13 @@
 /**
- * @ProjectName: employee-service
- * @PackageName: com.aashayein.employee.controller
+ * @ProjectName: export-service
+ * @PackageName: com.aashayein.export.controller
  * @FileName: GlobalExceptionHandler.java
  * @Author: Avishek Das
- * @CreatedDate: 17-06-2019
- * @Modified_By avishek.das @Last_On 17-Jun-2019 5:05:55 PM
+ * @CreatedDate: 20-06-2019
+ * @Modified_By avishek.das @Last_On 20-Jun-2019 1:11:43 AM
  */
 
-package com.aashayein.employee.controller;
+package com.aashayein.export.controller;
 
 import java.time.LocalDateTime;
 
@@ -17,9 +17,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import com.aashayein.employee.dto.ErrorResponse;
+import com.aashayein.export.dto.ErrorResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,6 +41,23 @@ public class GlobalExceptionHandler {
 		errorResponse.setPath(request.getRequestURI());
 
 		log.error(errorResponse.toString());
+
+		return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+	}
+
+	/* RestTemplate whenever it encounters client-side HTTP errors. */
+	@ExceptionHandler({ RestClientException.class })
+	public ResponseEntity<ErrorResponse> handlerInvalidURI(Exception e, HttpServletRequest request) {
+
+		ErrorResponse errorResponse = new ErrorResponse();
+		errorResponse.setTimestamp(LocalDateTime.now());
+		errorResponse.setStatus(HttpStatus.NOT_FOUND.value());
+		errorResponse.setError("Not Found");
+		errorResponse.setMessage(
+				"RestTemplate Error : The page you are looking for might have been removed had its name changed or is temporarily unavailable.");
+		errorResponse.setPath(request.getRequestURI());
+
+		log.error(e.getMessage() + " [Exception " + e.getClass() + "]");
 
 		return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
 	}
