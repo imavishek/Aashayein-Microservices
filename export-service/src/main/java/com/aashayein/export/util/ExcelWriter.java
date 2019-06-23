@@ -9,6 +9,8 @@
 
 package com.aashayein.export.util;
 
+import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -20,6 +22,7 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +39,7 @@ public class ExcelWriter {
 	@Autowired
 	private BuildSpreadSheet buildSpreadSheet;
 
-	public XSSFWorkbook buildWorkbook(ExcelDetails excelDetails) {
+	public XSSFWorkbook buildWorkbook(ExcelDetails excelDetails) throws Exception {
 
 		Map<String, String> header = excelDetails.getHeaderStyle();
 		Map<String, String> recordNotFound = excelDetails.getRecordNotFoundStyle();
@@ -105,9 +108,12 @@ public class ExcelWriter {
 		}
 
 		if (excelDetails.getData().isEmpty()) {
-			Row empty = spreadsheet.createRow(1);
-			empty.createCell(2).setCellValue("No Employee Record Found");
-			empty.getCell(2).setCellStyle(recordNotFoundStyle);
+			Row empty = spreadsheet.createRow(2);
+			empty.createCell(0).setCellValue("No Record Found");
+			empty.getCell(0).setCellStyle(recordNotFoundStyle);
+
+			// Mearge 2nd Row cells to one cell
+			spreadsheet.addMergedRegion(new CellRangeAddress(2, 2, 0, excelDetails.getColumns().length - 1));
 
 			// Resize all columns to fit the content size
 			for (int i = 0; i < excelDetails.getColumns().length; i++) {
@@ -115,7 +121,11 @@ public class ExcelWriter {
 			}
 		} else {
 
-			XSSFSheet sheet = buildSpreadSheet.buildSheetForEmployees(spreadsheet, excelDetails.getData());
+			// Calling the dynamic method name for build spreadsheet
+			Class<?>[] paramTypes = { XSSFSheet.class, List.class };
+			Method methodName = buildSpreadSheet.getClass().getMethod(excelDetails.getSpreadSheetMethodName(),
+					paramTypes);
+			XSSFSheet sheet = (XSSFSheet) methodName.invoke(buildSpreadSheet, spreadsheet, excelDetails.getData());
 
 			// Applying content cell style
 			for (int rowNo = 1; rowNo <= sheet.getLastRowNum(); rowNo++) {

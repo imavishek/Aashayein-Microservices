@@ -70,3 +70,13 @@ services:
       - "8060:8060"
     depends_on:
       - config-server
+
+  export-service:
+    container_name: export-service
+    build:
+      context: ./export-service
+      dockerfile: Dockerfile
+    ports:
+      - "8062:8062"
+    depends_on:
+      - config-server

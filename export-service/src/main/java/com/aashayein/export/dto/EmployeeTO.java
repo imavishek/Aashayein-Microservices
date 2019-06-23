@@ -81,8 +81,6 @@ public class EmployeeTO {
 
 	private String tokenUUID;
 
-	private String password;
-
 	private Date tokenGeneratedDate;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "GMT+5:30")

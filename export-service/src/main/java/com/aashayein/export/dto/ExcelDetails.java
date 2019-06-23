@@ -18,6 +18,8 @@ import lombok.Data;
 public class ExcelDetails {
 
 	private String sheetName;
+	
+	private String spreadSheetMethodName;
 
 	private String[] columns;
 

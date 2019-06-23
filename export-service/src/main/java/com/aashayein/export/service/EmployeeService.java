@@ -9,12 +9,13 @@
 
 package com.aashayein.export.service;
 
-import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
+import com.aashayein.export.dto.EmployeeTO;
 
 public interface EmployeeService {
 
-	String exportEmployeesToExcel(HttpServletResponse response) throws URISyntaxException, IOException;
+	public List<EmployeeTO> getEmployees() throws URISyntaxException;
+
 }
