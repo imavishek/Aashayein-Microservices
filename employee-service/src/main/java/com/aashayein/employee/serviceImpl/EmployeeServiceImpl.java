@@ -20,12 +20,16 @@ import com.aashayein.employee.dto.EmployeeTO;
 import com.aashayein.employee.entities.Employee;
 import com.aashayein.employee.repository.EmployeeRepository;
 import com.aashayein.employee.service.EmployeeService;
+import com.aashayein.employee.util.ConvertEntityToTransferObject;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
 	@Autowired
 	private EmployeeRepository employeeRepository;
+
+	@Autowired
+	private ConvertEntityToTransferObject convertEntityToTransferObject;
 
 	@Override
 	@Transactional
@@ -37,53 +41,59 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 		if (!employee.isEmpty()) {
 			for (Employee emp : employee) {
-				EmployeeTO employeeTo = new EmployeeTO();
-
-				employeeTo.setEmployeeId(emp.getEmployeeId());
-				employeeTo.setEmployeeCode(emp.getEmployeeCode());
-				employeeTo.setFirstName(emp.getFirstName());
-				employeeTo.setMiddleName(emp.getMiddleName());
-				employeeTo.setLastName(emp.getLastName());
-				employeeTo.setFullName(emp.getFullName());
-				employeeTo.setGender(emp.getGender());
-				employeeTo.setMobileNumber(emp.getMobileNumber());
-				employeeTo.setAlternateMobileNumber(emp.getAlternateMobileNumber());
-				employeeTo.setEmail(emp.getEmail());
-				employeeTo.setAlternateEmail(emp.getAlternateEmail());
-				employeeTo.setJobTitleName(emp.getTitle().getTitleName());
-				employeeTo.setRoleName(emp.getRole().getRoleName());
-
-				if (emp.getAddress() != null) {
-					employeeTo.setCountryName(emp.getAddress().getCountry().getCountryName());
-					employeeTo.setStateName(emp.getAddress().getState().getStateName());
-					employeeTo.setCityName(emp.getAddress().getCity().getCityName());
-					employeeTo.setPostalCode(emp.getAddress().getPostalCode());
-					employeeTo.setAddressLine1(emp.getAddress().getAddressLine1());
-				}
-
-				employeeTo.setActive(emp.getActive());
-				employeeTo.setArchive(emp.getArchive());
-				employeeTo.setProfilePhoto(emp.getProfilePhoto());
-				employeeTo.setJoiningDate(emp.getJoiningDate());
-				employeeTo.setRecordCreated(emp.getRecordCreated());
-				employeeTo.setRecordUpdated(emp.getRecordUpdated());
-
-				employees.add(employeeTo);
+				employees.add(convertEntityToTransferObject.convertEmployeeToEmployeeTO(emp));
 			}
 		}
+
 		return employees;
 	}
 
 	@Override
 	@Transactional
 	public EmployeeTO getEmployeeById(Integer employeeId) {
-		return null;
+
+		Employee employee = null;
+		EmployeeTO employeeTo = null;
+
+		employee = employeeRepository.findByEmployeeId(employeeId);
+
+		if (employee != null) {
+			employeeTo = convertEntityToTransferObject.convertEmployeeToEmployeeTO(employee);
+		}
+
+		return employeeTo;
 	}
 
 	@Override
 	@Transactional
 	public EmployeeTO getEmployeeByEmail(String email) {
-		return null;
+
+		Employee employee = null;
+		EmployeeTO employeeTo = null;
+
+		employee = employeeRepository.findByEmail(email);
+
+		if (employee != null) {
+			employeeTo = convertEntityToTransferObject.convertEmployeeToEmployeeTO(employee);
+		}
+
+		return employeeTo;
+	}
+
+	@Override
+	@Transactional
+	public EmployeeTO getEmployeeByMobileNumber(String mobileNumber) {
+
+		Employee employee = null;
+		EmployeeTO employeeTo = null;
+
+		employee = employeeRepository.findByMobileNumber(mobileNumber);
+
+		if (employee != null) {
+			employeeTo = convertEntityToTransferObject.convertEmployeeToEmployeeTO(employee);
+		}
+
+		return employeeTo;
 	}
 
 }

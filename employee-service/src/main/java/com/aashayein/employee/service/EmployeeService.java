@@ -20,4 +20,6 @@ public interface EmployeeService {
 	EmployeeTO getEmployeeById(Integer employeeId);
 
 	EmployeeTO getEmployeeByEmail(String email);
+
+	EmployeeTO getEmployeeByMobileNumber(String mobileNumber);
 }

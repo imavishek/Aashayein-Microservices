@@ -24,8 +24,10 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 	@Override
 	public List<Employee> getAllEmployees() {
-		// return employeeRepository.findAll(new Sort(Sort.Direction.DESC,
-		// "recordCreated"));
+		/*
+		 * return employeeRepository.findAll(new Sort(Sort.Direction.DESC,
+		 * "recordCreated"));
+		 */
 		return employeeRepository.findByOrderByRecordCreatedDesc();
 	}
 

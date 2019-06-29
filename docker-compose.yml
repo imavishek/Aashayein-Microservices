@@ -3,13 +3,26 @@ version: '3'
 services:
 
   rabbitmq:
+    image: 'rabbitmq:3-management'
     container_name: rabbitmq
-    image: 'rabbitmq:management'
+    hostname: 'localhost'
     environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
+      - RABBITMQ_DEFAULT_USER=aashayein
+      - RABBITMQ_DEFAULT_PASS=aashayein
+      - RABBITMQ_DEFAULT_VHOST=aashayein_vhost
     ports:
-      - "8055:5672"
+      - "5672:5672"
+      - "8055:15672"
+
+
+  zipkin-server:
+    image: 'openzipkin/zipkin'
+    container_name: zipkin-server
+    environment:
+      - STORAGE_TYPE=mem
+    ports:
+      - "8054:9411"
+
 
   config-server:
     container_name: config-server
@@ -21,6 +34,7 @@ services:
     depends_on:
       - rabbitmq
 
+
   eureka-server:
     container_name: eureka-server
     build:
@@ -30,6 +44,7 @@ services:
       - "8050:8050"
     depends_on:
       - config-server
+
 
   zuul-gateway:
     container_name: zuul-gateway
@@ -42,6 +57,7 @@ services:
       - config-server
       - eureka-server
 
+
   hystrix-dashboard:
     container_name: hystrix-dashboard
     build:
@@ -53,14 +69,7 @@ services:
       - config-server
       - eureka-server
 
-  zipkin-server:
-    container_name: zipkin-server
-    image: 'openzipkin/zipkin'
-    environment:
-      - STORAGE_TYPE=mem
-    ports:
-      - "8054:9411"
-
+  
   employee-service:
     container_name: employee-service
     build:
@@ -71,6 +80,7 @@ services:
     depends_on:
       - config-server
 
+
   export-service:
     container_name: export-service
     build:
@@ -78,5 +88,16 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8062:8062"
+    depends_on:
+      - config-server
+
+
+  mail-service:
+    container_name: mail-service
+    build:
+      context: ./mail-service
+      dockerfile: Dockerfile
+    ports:
+      - "8065:8065"
     depends_on:
       - config-server

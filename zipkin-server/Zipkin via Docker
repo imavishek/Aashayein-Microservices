@@ -4,3 +4,29 @@ Start Zipkin via Docker
 docker run -d -p 8054:9411 openzipkin/zipkin
 
 http://your_host:8054/zipkin/
+
+Start RabbitMQ via Docker
+-------------------------
+
+docker run -d --hostname aashayein-rabbit --name aashayein-rabbit -p 8055:15672 rabbitmq:3-management
+
+
+http://localhost:8055
+
+username:guest
+password:guest
+
+Setting default user and password
+---------------------------------
+
+docker run -d --hostname aashayein --name aashayein-rabbit -e RABBITMQ_DEFAULT_USER=aashayein -e RABBITMQ_DEFAULT_PASS=aashayein -p 8055:15672 rabbitmq:3-management
+
+
+Setting default vhost
+--------------------
+
+docker run -d --hostname aashayein --name aashayein-rabbit -e RABBITMQ_DEFAULT_VHOST=aashayein_vhost rabbitmq:3-management
+
+
+docker run -d --hostname localhost --name aashayein-rabbit -e RABBITMQ_DEFAULT_USER=aashayein -e RABBITMQ_DEFAULT_PASS=aashayein -e RABBITMQ_DEFAULT_VHOST=aashayein_vhost -p 5672:5672 -p 8055:15672 rabbitmq:3-management
+

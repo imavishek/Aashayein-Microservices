@@ -26,6 +26,7 @@ public class EmployeeController {
 	@Autowired
 	EmployeeService employeeService;
 
+	// Get all employee details
 	@GetMapping(value = "/getEmployees")
 	public List<EmployeeTO> getEmployees() {
 

@@ -20,4 +20,13 @@ import com.aashayein.employee.entities.Employee;
 public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
 	List<Employee> findByOrderByRecordCreatedDesc();
+
+	Employee findTopByOrderByEmployeeIdDesc();
+
+	Employee findByEmployeeId(Integer employeeId);
+
+	Employee findByEmail(String email);
+
+	Employee findByMobileNumber(String mobileNumber);
+
 }

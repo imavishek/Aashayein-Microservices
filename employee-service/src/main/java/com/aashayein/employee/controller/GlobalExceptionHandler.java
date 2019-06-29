@@ -10,6 +10,8 @@
 package com.aashayein.employee.controller;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,6 +22,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import com.aashayein.employee.dto.ErrorResponse;
+import com.aashayein.employee.exception.DatabindingException;
+import com.aashayein.employee.exception.EmployeeEmailExistsException;
+import com.aashayein.employee.exception.EmployeeMobileNumberExistsException;
+import com.aashayein.employee.exception.SMTPException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,14 +35,17 @@ public class GlobalExceptionHandler {
 
 	/* Handler Not Found Exception Handler */
 	@ExceptionHandler({ NoHandlerFoundException.class })
-	public ResponseEntity<ErrorResponse> handlerNoHandlerFoundException(Exception e, HttpServletRequest request) {
+	public ResponseEntity<ErrorResponse> handleNoHandlerFoundException(Exception e, HttpServletRequest request) {
+
+		List<String> messages = new ArrayList<String>();
+		messages.add(
+				"The page you are looking for might have been removed had its name changed or is temporarily unavailable.");
 
 		ErrorResponse errorResponse = new ErrorResponse();
 		errorResponse.setTimestamp(LocalDateTime.now());
 		errorResponse.setStatus(HttpStatus.NOT_FOUND.value());
 		errorResponse.setError("Not Found");
-		errorResponse.setMessage(
-				"The page you are looking for might have been removed had its name changed or is temporarily unavailable.");
+		errorResponse.setMessage(messages);
 		errorResponse.setPath(request.getRequestURI());
 
 		log.error(errorResponse.toString());
@@ -44,15 +53,94 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
 	}
 
+	/* Databinding Exception Handler */
+	@ExceptionHandler({ DatabindingException.class })
+	public ResponseEntity<ErrorResponse> handleDatabindingException(DatabindingException e,
+			HttpServletRequest request) {
+
+		ErrorResponse errorResponse = new ErrorResponse();
+		errorResponse.setTimestamp(LocalDateTime.now());
+		errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+		errorResponse.setError("Bad Request");
+		errorResponse.setMessage(e.getErrors());
+		errorResponse.setPath(request.getRequestURI());
+
+		log.error(errorResponse.toString());
+
+		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+	}
+
+	/* Employee Email Exists Exception Handler */
+	@ExceptionHandler({ EmployeeEmailExistsException.class })
+	public ResponseEntity<ErrorResponse> handleEmployeeEmailExistsException(EmployeeEmailExistsException e,
+			HttpServletRequest request) {
+
+		List<String> messages = new ArrayList<String>();
+		messages.add("Email " + e.getMessage() + " already exists.");
+
+		ErrorResponse errorResponse = new ErrorResponse();
+		errorResponse.setTimestamp(LocalDateTime.now());
+		errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+		errorResponse.setError("Bad Request");
+		errorResponse.setMessage(messages);
+		errorResponse.setPath(request.getRequestURI());
+
+		log.error(errorResponse.toString());
+
+		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+	}
+
+	/* Employee MobileNumber Exists Exception Handler */
+	@ExceptionHandler({ EmployeeMobileNumberExistsException.class })
+	public ResponseEntity<ErrorResponse> handleEmployeeMobileNumberExistsException(
+			EmployeeMobileNumberExistsException e, HttpServletRequest request) {
+
+		List<String> messages = new ArrayList<String>();
+		messages.add("MobileNumber " + e.getMessage() + " already exists.");
+
+		ErrorResponse errorResponse = new ErrorResponse();
+		errorResponse.setTimestamp(LocalDateTime.now());
+		errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+		errorResponse.setError("Bad Request");
+		errorResponse.setMessage(messages);
+		errorResponse.setPath(request.getRequestURI());
+
+		log.error(errorResponse.toString());
+
+		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+	}
+
+	/* SMTP Exception Handler */
+	@ExceptionHandler({ SMTPException.class })
+	public ResponseEntity<ErrorResponse> handleSMTPException(SMTPException e, HttpServletRequest request) {
+
+		List<String> messages = new ArrayList<String>();
+		messages.add("SMTP verification failed for mailId: " + e.getMessage());
+
+		ErrorResponse errorResponse = new ErrorResponse();
+		errorResponse.setTimestamp(LocalDateTime.now());
+		errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+		errorResponse.setError("Bad Request");
+		errorResponse.setMessage(messages);
+		errorResponse.setPath(request.getRequestURI());
+
+		log.error(errorResponse.toString());
+
+		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+	}
+
 	/* Generic Exception Handler */
 	@ExceptionHandler({ Exception.class })
 	public ResponseEntity<ErrorResponse> handleException(Exception e, HttpServletRequest request) {
+
+		List<String> messages = new ArrayList<String>();
+		messages.add("The server has encountered an unexpected error. Please contact administrator.");
 
 		ErrorResponse errorResponse = new ErrorResponse();
 		errorResponse.setTimestamp(LocalDateTime.now());
 		errorResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
 		errorResponse.setError("Internal Server Error");
-		errorResponse.setMessage("The server has encountered an unexpected error. Please contact administrator.");
+		errorResponse.setMessage(messages);
 		errorResponse.setPath(request.getRequestURI());
 
 		log.error(e.getMessage() + " [Exception " + e.getClass() + "]");
