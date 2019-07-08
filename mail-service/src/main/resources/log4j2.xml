@@ -2,8 +2,9 @@
 <Configuration status="WARN" monitorInterval="30">
 	<Properties>
 		<Property name="BASE_PATH">logs</Property>
+		<Property name="APP_NAME">${bundle:application:spring.application.name}</Property>
 		<Property name="LOG_PATTERN">
-			[%-5level] %d{dd-MM-yyyy HH:mm:ss} [TraceId: %X{traceId}] [SpanId: %X{spanId}] [ParentSpanId: %X{X-B3-ParentSpanId}] [Span-Export: %X{X-Span-Export}] [%c{1}]  %msg%n
+			[%-5level] %d{dd-MM-yyyy HH:mm:ss} [AppName: ${APP_NAME}] [TraceId: %X{traceId}] [SpanId: %X{spanId}] [ParentSpanId: %X{X-B3-ParentSpanId}] [Span-Export: %X{X-Span-Export}] [%c{1}]  %msg%n
 			<!-- [%-5level] [TraceId: %X{X-B3-TraceId}] [SpanId: %X{X-B3-SpanId}] [ParentSpanId: %X{X-B3-ParentSpanId}] [Span-Export: %X{X-Span-Export}] %d{dd-MM-yyyy HH:mm:ss} [%c{1}]  %msg%n -->
 		</Property>
 	</Properties>

@@ -13,12 +13,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
-import org.springframework.context.annotation.PropertySource;
 
 @SpringBootApplication(scanBasePackages = { "com.aashayein.export.*" })
 @EnableEurekaClient
 @EnableCircuitBreaker
-@PropertySource({ "classpath:properties/application.properties", "classpath:properties/bootstrap.properties" })
 public class ExportServiceApplication {
 
 	public static void main(String[] args) {

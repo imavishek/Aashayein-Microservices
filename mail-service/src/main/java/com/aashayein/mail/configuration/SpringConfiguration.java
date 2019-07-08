@@ -17,18 +17,9 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class SpringConfiguration {
 
-	@Bean("rest-template")
-	public RestTemplate restTemplate() {
-		return new RestTemplate();
-	}
-
-	/*
-	 * Ribbon is a client-side load balancer and SpringTemplate supports it by
-	 * simply adding one annotation: @LoadBalanced.
-	 */
-	@Bean("ribbon-template")
+	@Bean
 	@LoadBalanced
-	public RestTemplate restTemplateWithRibbon() {
+	public RestTemplate restTemplate() {
 		return new RestTemplate();
 	}
 

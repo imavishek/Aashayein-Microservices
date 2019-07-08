@@ -30,6 +30,12 @@ public class SpringConfiguration {
 
 	@Bean("rest-template")
 	public RestTemplate restTemplate() {
+
+		/* If the called micro service's response does not back in 3sec throw error */
+
+//		HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+//		clientHttpRequestFactory.setConnectTimeout(3000);
+
 		return new RestTemplate();
 	}
 

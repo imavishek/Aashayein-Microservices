@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import com.aashayein.zuul.controller.GlobalExceptionHandler;
 import com.aashayein.zuul.dto.ErrorResponse;
 
 import lombok.extern.slf4j.Slf4j;
@@ -45,5 +44,21 @@ public class GlobalExceptionHandler {
 		log.error(errorResponse.toString());
 
 		return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+	}
+
+	/* Generic Exception Handler */
+	@ExceptionHandler({ Exception.class })
+	public ResponseEntity<ErrorResponse> handleException(Exception e, HttpServletRequest request) {
+
+		ErrorResponse errorResponse = new ErrorResponse();
+		errorResponse.setTimestamp(LocalDateTime.now());
+		errorResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+		errorResponse.setError("Internal Server Error");
+		errorResponse.setMessage("The server has encountered an unexpected error. Please contact administrator.");
+		errorResponse.setPath(request.getRequestURI());
+
+		log.error(e.getMessage() + " [Exception " + e.getClass() + "]");
+
+		return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }

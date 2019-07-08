@@ -25,6 +25,7 @@ import com.aashayein.employee.dto.ErrorResponse;
 import com.aashayein.employee.exception.DatabindingException;
 import com.aashayein.employee.exception.EmployeeEmailExistsException;
 import com.aashayein.employee.exception.EmployeeMobileNumberExistsException;
+import com.aashayein.employee.exception.EmployeeNotFoundException;
 import com.aashayein.employee.exception.SMTPException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -127,6 +128,26 @@ public class GlobalExceptionHandler {
 		log.error(errorResponse.toString());
 
 		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+	}
+
+	/* Employee Not Found Exception Handler */
+	@ExceptionHandler({ EmployeeNotFoundException.class })
+	public ResponseEntity<ErrorResponse> handleEmployeeNotFoundException(EmployeeNotFoundException e,
+			HttpServletRequest request) {
+
+		List<String> messages = new ArrayList<String>();
+		messages.add("Employee Not Found: " + e.getMessage());
+
+		ErrorResponse errorResponse = new ErrorResponse();
+		errorResponse.setTimestamp(LocalDateTime.now());
+		errorResponse.setStatus(HttpStatus.NOT_FOUND.value());
+		errorResponse.setError("Not Found");
+		errorResponse.setMessage(messages);
+		errorResponse.setPath(request.getRequestURI());
+
+		log.error(errorResponse.toString());
+
+		return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
 	}
 
 	/* Generic Exception Handler */

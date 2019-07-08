@@ -22,4 +22,5 @@ public interface EmployeeService {
 	EmployeeTO getEmployeeByEmail(String email);
 
 	EmployeeTO getEmployeeByMobileNumber(String mobileNumber);
+
 }

@@ -34,6 +34,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Autowired
 	private RestTemplate restTemplate;
 
+//	@HystrixCommand(fallbackMethod = "getEmployeesFallback", commandProperties = {
+//			@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "2000"),
+//			@HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "5"),
+//			@HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "50"),
+//			@HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "5000") })
 	@HystrixCommand(fallbackMethod = "getEmployeesFallback")
 	public List<EmployeeTO> getEmployees() throws URISyntaxException {
 
