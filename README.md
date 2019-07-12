@@ -4,4 +4,4 @@ Aashayein Microservices
 # Aashayein-Microservices
 
 
-![alt text](https://raw.github.com/avishek-akd/Aashayein-Microservices/tree/master/documentation/Config Server Architecture.png)
+![Config Server Architecture](https://github.com/avishek-akd/Aashayein-Microservices/blob/master/documentation/Config%20Server%20Architecture.png)
