@@ -8,7 +8,7 @@
 	<artifactId>mail-service</artifactId>
 	<version>V-1.0</version>
 	<packaging>jar</packaging>
-	
+
 	<name>mail-service</name>
 	<description>Mail Service</description>
 

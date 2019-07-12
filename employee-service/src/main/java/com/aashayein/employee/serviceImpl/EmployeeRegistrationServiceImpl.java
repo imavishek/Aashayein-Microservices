@@ -126,7 +126,7 @@ public class EmployeeRegistrationServiceImpl implements EmployeeRegistrationServ
 		// Send registration success mail
 		registrationMailSender.sendMail(employee);
 
-		return employee;
+		return employeeTo;
 	}
 
 }

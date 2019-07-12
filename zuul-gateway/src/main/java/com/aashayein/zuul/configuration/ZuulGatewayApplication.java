@@ -17,7 +17,6 @@ import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 @SpringBootApplication(scanBasePackages = { "com.aashayein.zuul.*" })
 @EnableZuulProxy
 @EnableEurekaClient
-// @PropertySource({ "classpath:properties/application.properties", "classpath:properties/bootstrap.properties" })
 public class ZuulGatewayApplication {
 
 	public static void main(String[] args) {

@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,10 +30,17 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping(value = "/Admin/Employee")
 @Slf4j
+@RefreshScope
 public class EmployeeController {
 
 	@Autowired
 	EmployeeService employeeService;
+	
+	@Value("${path.server}")
+	private String demo;
+	
+	@Value("${spring.profiles.active}")
+	private String activeProfile;
 
 	// Get all employee details
 	@GetMapping(value = "/getEmployees")
@@ -67,6 +76,14 @@ public class EmployeeController {
 		}
 
 		return employee;
+	}
+
+	// Get all employee details
+	@GetMapping(value = "/demo")
+	public String getDemo() {
+
+
+		return demo;
 	}
 
 }

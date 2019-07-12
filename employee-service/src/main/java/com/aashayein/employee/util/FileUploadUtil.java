@@ -18,6 +18,7 @@ import javax.servlet.ServletContext;
 
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,46 +31,58 @@ public class FileUploadUtil {
 	@Autowired
 	private ServletContext servletContext;
 
-	private static String ABS_PATH = null;
-	private static String REAL_PATH = null;
+	@Value("${spring.profiles.active}")
+	private String activeProfile;
+
+	@Value("${path.employee.photo}")
+	private String profilePhotoFolder;
+
+	@Value("${path.dev.mac.employee.photo}")
+	private String absPathMac;
+
+	@Value("${path.dev.windows.employee.photo}")
+	private String absPathWindows;
 
 	// Upload Profile Picture Into Server
 	public String uploadProfilePictureIntoServer(MultipartFile profilePhotoFile, String employeeCode) {
 
 		String fileName = null;
 		String extension = null;
+		String realPath = null;
+		String absPath = null;
 
 		// Return null if file is empty
 		if (profilePhotoFile.isEmpty()) {
 			return null;
 		}
 
-		// Development path
-		if (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0) {
+		if (activeProfile.equalsIgnoreCase("dev")) {
 
-			ABS_PATH = "/DEBIAN/Aashayein/employee-service/src/main/resources/upload/profilePictures/";
-		} else {
-			ABS_PATH = "E:/Aashayein/employee-service/src/main/resources/upload/profilePictures/";
+			// Development path
+			if (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0) {
+				absPath = absPathMac;
+			} else {
+				absPath = absPathWindows;
+			}
 		}
 
 		// get the real server path
-		REAL_PATH = servletContext.getRealPath("/upload/profilePictures/");
+		realPath = servletContext.getRealPath(profilePhotoFolder);
 
-		log.info("Development Upload Path For ProfilePictures " + ABS_PATH);
-		log.info("Server Upload Path For ProfilePictures " + REAL_PATH);
+		log.info("Development Upload Path For ProfilePictures " + absPath);
+		log.info("Server Upload Path For ProfilePictures " + realPath);
 
 		// Upload ProfilePicture in both development and server
-
 		try {
 
 			// create the directories if it does not exist
-			if (!new File(REAL_PATH).exists()) {
-				new File(REAL_PATH).mkdirs();
+			if (!new File(realPath).exists()) {
+				new File(realPath).mkdirs();
 			}
 
-//			if (!new File(ABS_PATH).exists()) {
-//				new File(ABS_PATH).mkdirs();
-//			}
+			if (!new File(absPath).exists()) {
+				new File(absPath).mkdirs();
+			}
 
 			/*
 			 * Get the file extension and rename the file PP- ProfilePicture
@@ -77,17 +90,17 @@ public class FileUploadUtil {
 			extension = FilenameUtils.getExtension(profilePhotoFile.getOriginalFilename());
 			fileName = "PP_" + UUID.randomUUID().toString() + "." + extension;
 
-			// transfer the file to both the location
-			profilePhotoFile.transferTo(new File(REAL_PATH + fileName));
+			// Transfer the file to server
+			profilePhotoFile.transferTo(new File(realPath + fileName));
 
 			/*
 			 * As file already transfered in above. You can't use MultipartFile#transferTo
 			 * method twice, second call of transferTo method should be replaced with a
 			 * logic of file copying.
 			 */
-			Files.copy(Paths.get(REAL_PATH + fileName), Paths.get(ABS_PATH + fileName));
+			Files.copy(Paths.get(realPath + fileName), Paths.get(absPath + fileName));
 
-			log.info("Profile Picture Uploaded Successfully For The Employee Having EmployeeCode :- " + employeeCode);
+			log.info("Profile Picture Uploaded Successfully For The Employee Having EmployeeCode : " + employeeCode);
 
 			return fileName;
 		} catch (Exception e) {

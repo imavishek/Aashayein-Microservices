@@ -11,6 +11,7 @@ package com.aashayein.employee.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -28,14 +29,20 @@ public class Mailboxlayer {
 	@Qualifier("rest-template")
 	private RestTemplate restTemplate;
 
+	@Value("${api.mailbox.access.key}")
+	private String mailBoxlayerKey;
+
+	@Value("${api.mailbox.url}")
+	private String mailBoxlayerUrl;
+
 	// Calling Mailboxlayer API for check email existence
 	public MailCheckerTO checkEmailExistence(String mailId) {
 
-		String mailBoxlayerUrl = "http://apilayer.net/api/check?access_key=3978ea99a6d5573639b61d4c93cdd174&email="
-				+ mailId + "&smtp=1";
+		String url = mailBoxlayerUrl + "?access_key=" + mailBoxlayerKey + "&email=" + mailId + "&smtp=1";
 
-		ResponseEntity<MailCheckerTO> response = restTemplate.exchange(mailBoxlayerUrl, HttpMethod.GET, null,
-				MailCheckerTO.class);
+		log.info("Mailboxlayer API Url: " + url);
+
+		ResponseEntity<MailCheckerTO> response = restTemplate.exchange(url, HttpMethod.GET, null, MailCheckerTO.class);
 
 		log.info("Mailboxlayer API Response: " + response);
 
