@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -28,11 +30,15 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
+@RefreshScope
 @Slf4j
 public class EmployeeServiceImpl implements EmployeeService {
 
 	@Autowired
 	private RestTemplate restTemplate;
+
+	@Value("${url.employee-service.employees}")
+	private String getEmployeesUrl;
 
 //	@HystrixCommand(fallbackMethod = "getEmployeesFallback", commandProperties = {
 //			@HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "2000"),
@@ -43,8 +49,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public List<EmployeeTO> getEmployees() throws URISyntaxException {
 
 		// Employee Service getEmployees url
-		String baseUrl = "http://employee-service/Admin/Employee/getEmployees";
-		URI url = new URI(baseUrl);
+		URI url = new URI(getEmployeesUrl);
 
 		// Getting employees from employee-service
 		ResponseEntity<List<EmployeeTO>> responseDate = restTemplate.exchange(url, HttpMethod.GET, null,

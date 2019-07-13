@@ -174,7 +174,7 @@ public class ExcelWriter {
 		return workbook;
 	}
 
-	public String getValue(Map<String, String> style, String attributrName, String defaultValue) {
+	private String getValue(Map<String, String> style, String attributrName, String defaultValue) {
 		return style.get(attributrName) != null ? style.get(attributrName) : defaultValue;
 	}
 }

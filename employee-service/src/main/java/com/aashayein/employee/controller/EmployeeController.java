@@ -36,8 +36,6 @@ public class EmployeeController {
 	@Autowired
 	EmployeeService employeeService;
 	
-	@Value("${path.server}")
-	private String demo;
 	
 	@Value("${spring.profiles.active}")
 	private String activeProfile;
@@ -83,7 +81,7 @@ public class EmployeeController {
 	public String getDemo() {
 
 
-		return demo;
+		return activeProfile;
 	}
 
 }

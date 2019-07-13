@@ -1,0 +1,4 @@
+docker pull rabbitmq:3-management
+
+
+docker run -d --hostname localhost -e RABBITMQ_DEFAULT_USER=aashayein -e RABBITMQ_DEFAULT_PASS=aashayein -e RABBITMQ_DEFAULT_VHOST=aashayein_vhost -p 5672:5672 -p 8055:15672 rabbitmq:3-management

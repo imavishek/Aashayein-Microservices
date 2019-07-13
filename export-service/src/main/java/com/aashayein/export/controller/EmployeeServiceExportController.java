@@ -24,8 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.aashayein.export.service.EmployeeExportService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping(value = "/Admin/Employee")
+@Slf4j
 public class EmployeeServiceExportController {
 
 	@Autowired
@@ -44,6 +47,8 @@ public class EmployeeServiceExportController {
 		FileInputStream in = new FileInputStream(file);
 
 		IOUtils.copy(in, out);
+
+		log.info("Employee SpreedSheet Downloaded successfully");
 
 		out.close();
 		in.close();

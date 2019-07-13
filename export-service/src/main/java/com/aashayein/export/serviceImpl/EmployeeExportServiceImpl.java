@@ -19,6 +19,8 @@ import java.util.Map;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 import com.aashayein.export.dto.EmployeeTO;
@@ -30,6 +32,7 @@ import com.aashayein.export.util.ExcelWriter;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
+@RefreshScope
 @Slf4j
 public class EmployeeExportServiceImpl implements EmployeeExportService {
 
@@ -39,11 +42,15 @@ public class EmployeeExportServiceImpl implements EmployeeExportService {
 	@Autowired
 	private EmployeeService employeeService;
 
+	@Value("${directory.temp}")
+	private String tempDirectory;
+
 	@Override
 	public String exportEmployeesToExcel() throws Exception {
 
 		String fileLocation = null;
 		String fileName = "employees.xlsx";
+		String directoryLocation = "";
 
 		// Get all employees details
 		List<EmployeeTO> employees = employeeService.getEmployees();
@@ -111,8 +118,17 @@ public class EmployeeExportServiceImpl implements EmployeeExportService {
 		FileOutputStream outputStream = null;
 		try {
 			File currDir = new File(".");
-			String path = currDir.getAbsolutePath();
-			fileLocation = path.substring(0, path.length() - 1) + "src\\main\\resources\\tmp\\" + fileName;
+
+			directoryLocation = currDir.getAbsolutePath().substring(0, currDir.getAbsolutePath().length() - 1)
+					+ tempDirectory;
+			File uploadDirectory = new File(directoryLocation);
+
+			// If uploadDirectory not exists, create the directory
+			if (!uploadDirectory.exists()) {
+				uploadDirectory.mkdir();
+			}
+
+			fileLocation = directoryLocation + fileName;
 
 			outputStream = new FileOutputStream(fileLocation);
 			workbook.write(outputStream);
