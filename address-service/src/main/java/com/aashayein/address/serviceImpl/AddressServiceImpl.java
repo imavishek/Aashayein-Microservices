@@ -40,6 +40,7 @@ public class AddressServiceImpl implements AddressService {
 	private CityRepository cityRepository;
 
 	@Override
+	@Transactional
 	public List<CountryTO> getCountries() {
 		List<CountryTO> countryTo = new ArrayList<CountryTO>();
 
@@ -83,6 +84,7 @@ public class AddressServiceImpl implements AddressService {
 	}
 
 	@Override
+	@Transactional
 	public List<CityTO> getCitiesByState(Integer stateId) {
 		List<CityTO> cityTo = new ArrayList<CityTO>();
 

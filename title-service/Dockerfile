@@ -7,14 +7,14 @@ MAINTAINER Avishek Das <avishek.akd@gmail.com>
 # Add a volume pointing to /tmp
 VOLUME /tmp
 
-# Make port 8061 available to the world outside this container
-EXPOSE 8061
+# Make port 8063 available to the world outside this container
+EXPOSE 8063
 
 # The application's jar file
-ARG JAR_FILE=target/address-service.jar
+ARG JAR_FILE=target/title-service.jar
 
 # Add the application's jar to the container
-ADD ${JAR_FILE} address-service.jar
+ADD ${JAR_FILE} title-service.jar
 
 # Run the jar file
-ENTRYPOINT ["java", "-jar", "/address-service.jar"]
+ENTRYPOINT ["java", "-jar", "/title-service.jar"]

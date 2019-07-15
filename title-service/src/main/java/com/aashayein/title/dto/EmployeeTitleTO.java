@@ -1,13 +1,13 @@
 /**
- * @ProjectName: employee-service
- * @PackageName: com.aashayein.employee.dto
+ * @ProjectName: title-service
+ * @PackageName: com.aashayein.title.dto
  * @FileName: EmployeeTitleTO.java
  * @Author: Avishek Das
- * @CreatedDate: 12-06-2019
- * @Modified_By avishek.das @Last_On 12-Jun-2019 3:50:28 PM
+ * @CreatedDate: 14-07-2019
+ * @Modified_By avishek.das @Last_On 14-Jul-2019 2:09:59 PM
  */
 
-package com.aashayein.employee.dto;
+package com.aashayein.title.dto;
 
 import java.util.Date;
 

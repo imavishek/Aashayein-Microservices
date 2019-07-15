@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -52,6 +53,26 @@ public class GlobalExceptionHandler {
 		log.error(errorResponse.toString());
 
 		return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+	}
+
+	/* Method Not Supported Exception Handler */
+	@ExceptionHandler({ HttpRequestMethodNotSupportedException.class })
+	public ResponseEntity<ErrorResponse> handleHttpRequestMethodNotSupportedException(
+			HttpRequestMethodNotSupportedException e, HttpServletRequest request) {
+
+		List<String> messages = new ArrayList<String>();
+		messages.add(e.getMessage());
+
+		ErrorResponse errorResponse = new ErrorResponse();
+		errorResponse.setTimestamp(LocalDateTime.now());
+		errorResponse.setStatus(HttpStatus.METHOD_NOT_ALLOWED.value());
+		errorResponse.setError("Method Not Allowed");
+		errorResponse.setMessage(messages);
+		errorResponse.setPath(request.getRequestURI());
+
+		log.error(errorResponse.toString());
+
+		return new ResponseEntity<>(errorResponse, HttpStatus.METHOD_NOT_ALLOWED);
 	}
 
 	/* Databinding Exception Handler */

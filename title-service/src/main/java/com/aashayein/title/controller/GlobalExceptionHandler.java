@@ -1,13 +1,13 @@
 /**
- * @ProjectName: address-service
- * @PackageName: com.aashayein.address.controller
+ * @ProjectName: title-service
+ * @PackageName: com.aashayein.title.controller
  * @FileName: GlobalExceptionHandler.java
  * @Author: Avishek Das
  * @CreatedDate: 14-07-2019
- * @Modified_By avishek.das @Last_On 14-Jul-2019 12:15:46 AM
+ * @Modified_By avishek.das @Last_On 14-Jul-2019 2:20:54 PM
  */
 
-package com.aashayein.address.controller;
+package com.aashayein.title.controller;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,8 +22,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import com.aashayein.address.dto.ErrorResponse;
-import com.aashayein.address.exception.DatabindingException;
+import com.aashayein.title.dto.ErrorResponse;
+import com.aashayein.title.exception.DatabindingException;
+import com.aashayein.title.exception.EmployeeTitleNotFoundException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -86,6 +87,26 @@ public class GlobalExceptionHandler {
 		log.error(errorResponse.toString());
 
 		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+	}
+
+	/* Employee Title Not Found Exception Handler */
+	@ExceptionHandler({ EmployeeTitleNotFoundException.class })
+	public ResponseEntity<ErrorResponse> handleEmployeeTitleNotFoundException(EmployeeTitleNotFoundException e,
+			HttpServletRequest request) {
+
+		List<String> messages = new ArrayList<String>();
+		messages.add("Employee Title Not Found: " + e.getMessage());
+
+		ErrorResponse errorResponse = new ErrorResponse();
+		errorResponse.setTimestamp(LocalDateTime.now());
+		errorResponse.setStatus(HttpStatus.NOT_FOUND.value());
+		errorResponse.setError("Not Found");
+		errorResponse.setMessage(messages);
+		errorResponse.setPath(request.getRequestURI());
+
+		log.error(errorResponse.toString());
+
+		return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
 	}
 
 	/* Generic Exception Handler */
