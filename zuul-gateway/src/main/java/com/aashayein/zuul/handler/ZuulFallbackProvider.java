@@ -7,7 +7,7 @@
  * @Modified_By avishek.das @Last_On 04-Jul-2019 10:10:34 PM
  */
 
-package com.aashayein.zuul.util;
+package com.aashayein.zuul.handler;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
