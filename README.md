@@ -19,13 +19,18 @@ Hands-on experience with build and deployment tools including Maven and Docker, 
 Developed the code environment using IDE as STS-4 and deployed into Tomcat Server.
 
 
+
+# Microservice Architecture Diagram
+
+
+![Microservice Architecture](https://github.com/avishek-akd/Aashayein-Microservices/blob/master/documentation/Microservice%20Architecture.png)
+
+
+
 # Config Server Architecture Diagram Integration With Git Webhook
 
 
 ![Config Server Architecture](https://github.com/avishek-akd/Aashayein-Microservices/blob/master/documentation/Config%20Server%20Architecture.png)
 
 
-# Microservice Architecture Diagram
 
-
-![Microservice Architecture](https://github.com/avishek-akd/Aashayein-Microservices/blob/master/documentation/Microservice%20Architecture.png)
