@@ -166,7 +166,7 @@ public class EmployeeTitleController {
 				employeeTitleTo.setTitleId(Integer.parseInt(employeeTitleId));
 				employeeTitleTo.setTitleName(employeeTitleCommand.getTitleName());
 
-				// Delete employee title
+				// Update employee title
 				EmployeeTitleTO employeeTitle = employeeTitleService.updateEmployeeTitle(employeeTitleTo);
 
 				if (employeeTitle == null) {

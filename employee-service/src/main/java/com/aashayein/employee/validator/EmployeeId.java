@@ -19,7 +19,7 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 @Documented
-@Constraint(validatedBy = FileSizeValidator.class)
+@Constraint(validatedBy = EmployeeIdValidator.class)
 @Target({ ElementType.PARAMETER, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface EmployeeId {

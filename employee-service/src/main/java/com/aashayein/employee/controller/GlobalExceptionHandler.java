@@ -27,6 +27,7 @@ import com.aashayein.employee.exception.DatabindingException;
 import com.aashayein.employee.exception.EmployeeEmailExistsException;
 import com.aashayein.employee.exception.EmployeeMobileNumberExistsException;
 import com.aashayein.employee.exception.EmployeeNotFoundException;
+import com.aashayein.employee.exception.InvalidTokenException;
 import com.aashayein.employee.exception.SMTPException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -138,6 +139,26 @@ public class GlobalExceptionHandler {
 
 		List<String> messages = new ArrayList<String>();
 		messages.add("SMTP verification failed for mailId: " + e.getMessage());
+
+		ErrorResponse errorResponse = new ErrorResponse();
+		errorResponse.setTimestamp(LocalDateTime.now());
+		errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+		errorResponse.setError("Bad Request");
+		errorResponse.setMessage(messages);
+		errorResponse.setPath(request.getRequestURI());
+
+		log.error(errorResponse.toString());
+
+		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+	}
+
+	/* Invalid Token Exception Handler */
+	@ExceptionHandler({ InvalidTokenException.class })
+	public ResponseEntity<ErrorResponse> handleInvalidTokenException(InvalidTokenException e,
+			HttpServletRequest request) {
+
+		List<String> messages = new ArrayList<String>();
+		messages.add("Invalid Token: " + e.getMessage());
 
 		ErrorResponse errorResponse = new ErrorResponse();
 		errorResponse.setTimestamp(LocalDateTime.now());

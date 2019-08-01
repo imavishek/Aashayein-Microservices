@@ -123,6 +123,10 @@ public class EmployeeRegistrationServiceImpl implements EmployeeRegistrationServ
 		// Convert Employee entity to EmployeeTO
 		employee = convertEntityToTransferObject.convertEmployeeToEmployeeTO(emp);
 
+		// Set TokenUUID
+		employee.setTokenUUID(emp.getTokenUUID());
+		employee.setTokenGeneratedDate(emp.getTokenGeneratedDate());
+
 		// Send registration success mail
 		registrationMailSender.sendMail(employee);
 

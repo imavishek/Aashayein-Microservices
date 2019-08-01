@@ -12,6 +12,7 @@ package com.aashayein.employee.service;
 import java.util.List;
 
 import com.aashayein.employee.dto.EmployeeTO;
+import com.aashayein.employee.exception.DatabindingException;
 
 public interface EmployeeService {
 
@@ -22,5 +23,13 @@ public interface EmployeeService {
 	EmployeeTO getEmployeeByEmail(String email);
 
 	EmployeeTO getEmployeeByMobileNumber(String mobileNumber);
+
+	EmployeeTO updateEmployee(EmployeeTO employeeTo);
+
+	EmployeeTO archiveEmployee(Integer employeeId);
+
+	EmployeeTO unArchiveEmployee(Integer employeeId);
+
+	boolean isValidEmployeeId(String employeeId) throws DatabindingException;
 
 }

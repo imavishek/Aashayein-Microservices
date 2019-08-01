@@ -67,6 +67,7 @@ public class EmployeeRegistrationController {
 	}
 
 	// Register employee and save details in database
+	// @PreAuthorize("hasAuthority('ROLE_Admin')")
 	@PostMapping(value = "/registerEmployee")
 	public ResponseEntity<String> registerEmployee(
 			@Valid @ModelAttribute EmployeeRegistrationCommand employeeRegistrationCommand, BindingResult result)

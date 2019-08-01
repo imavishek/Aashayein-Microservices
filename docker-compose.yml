@@ -81,6 +81,17 @@ services:
       - config-server
 
 
+  address-service:
+    container_name: address-service
+    build:
+      context: ./address-service
+      dockerfile: Dockerfile
+    ports:
+      - "8061:8061"
+    depends_on:
+      - config-server
+
+
   export-service:
     container_name: export-service
     build:
@@ -92,6 +103,27 @@ services:
       - config-server
 
 
+  title-service:
+    container_name: title-service
+    build:
+      context: ./title-service
+      dockerfile: Dockerfile
+    ports:
+      - "8063:8063"
+    depends_on:
+      - config-server
+      
+  role-service:
+    container_name: role-service
+    build:
+      context: ./role-service
+      dockerfile: Dockerfile
+    ports:
+      - "8064:8064"
+    depends_on:
+      - config-server
+
+
   mail-service:
     container_name: mail-service
     build:
@@ -99,5 +131,16 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8065:8065"
+    depends_on:
+      - config-server
+
+
+  oauth-server:
+    container_name: oauth-server
+    build:
+      context: ./oauth-server
+      dockerfile: Dockerfile
+    ports:
+      - "8056:8056"
     depends_on:
       - config-server

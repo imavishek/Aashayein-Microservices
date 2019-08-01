@@ -33,22 +33,25 @@ public class ConvertEntityToTransferObject {
 			employeeTo.setAlternateMobileNumber(employee.getAlternateMobileNumber());
 			employeeTo.setEmail(employee.getEmail());
 			employeeTo.setAlternateEmail(employee.getAlternateEmail());
-			employeeTo.setJobTitleName(employee.getTitle().getTitleName());
-			employeeTo.setRoleName(employee.getRole().getRoleName());
 
 			if (employee.getAddress() != null) {
+				employeeTo.setCountryId(employee.getAddress().getCountry().getCountryId());
 				employeeTo.setCountryName(employee.getAddress().getCountry().getCountryName());
+				employeeTo.setStateId(employee.getAddress().getState().getStateId());
 				employeeTo.setStateName(employee.getAddress().getState().getStateName());
+				employeeTo.setCityId(employee.getAddress().getCity().getCityId());
 				employeeTo.setCityName(employee.getAddress().getCity().getCityName());
 				employeeTo.setPostalCode(employee.getAddress().getPostalCode());
 				employeeTo.setAddressLine1(employee.getAddress().getAddressLine1());
 			}
 
+			employeeTo.setJobTitleId(employee.getTitle().getTitleId());
+			employeeTo.setJobTitleName(employee.getTitle().getTitleName());
+			employeeTo.setRoleId(employee.getRole().getRoleId());
+			employeeTo.setRoleName(employee.getRole().getRoleName());
 			employeeTo.setActive(employee.getActive());
 			employeeTo.setArchive(employee.getArchive());
 			employeeTo.setProfilePhoto(employee.getProfilePhoto());
-			employeeTo.setTokenUUID(employee.getTokenUUID());
-			employeeTo.setTokenGeneratedDate(employee.getTokenGeneratedDate());
 			employeeTo.setJoiningDate(employee.getJoiningDate());
 			employeeTo.setRecordCreated(employee.getRecordCreated());
 			employeeTo.setRecordUpdated(employee.getRecordUpdated());

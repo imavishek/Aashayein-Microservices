@@ -48,7 +48,7 @@ public class ConvertTransferObjectToEntity {
 					employeeTo.getAlternateEmail().isEmpty() ? null : employeeTo.getAlternateEmail());
 			employee.setTitle(employeeTitle);
 			employee.setRole(employeeRole);
-			employee.setProfilePhoto(employeeTo.getProfilePhoto());
+			employee.setProfilePhoto(employeeTo.getProfilePhoto().isEmpty() ? null : employeeTo.getProfilePhoto());
 			employee.setTokenUUID(UUID.randomUUID().toString());
 			employee.setTokenGeneratedDate(dateTime.getCurrentDateTime());
 			employee.setJoiningDate(employeeTo.getJoiningDate());

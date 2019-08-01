@@ -29,4 +29,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
 	Employee findByMobileNumber(String mobileNumber);
 
+	Employee findByTokenUUID(String tokenUUID);
+
 }
