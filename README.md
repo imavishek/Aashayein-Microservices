@@ -36,7 +36,7 @@ Developed the code environment using IDE as STS-4 and deployed into Tomcat Serve
 # Authentication Architecture Diagram Integration With OAuth2
 
 
-![Authentication Architecture](https://github.com/avishek-akd/Aashayein-Microservices/blob/master/documentation/Authentication%20Architecture.png)
+![Authentication Architecture](https://github.com/imavishek/Aashayein-Microservices/blob/master/documentation/Authentication%20Architecture.png)
 
 
 
