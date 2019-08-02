@@ -45,10 +45,19 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED).and().authorizeRequests()
-				.antMatchers("/Admin/**").hasRole("Admin").antMatchers("/EmployeeProfile/Reset/**").permitAll()
-				.antMatchers("/EmployeeProfile/activeAccount/**").permitAll().anyRequest().authenticated().and()
-				.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
+		http
+			.sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+				.and()
+			.authorizeRequests()
+				.antMatchers("/Admin/**").hasRole("Admin")
+				.antMatchers("/EmployeeProfile/Reset/**").permitAll()
+				.antMatchers("/EmployeeProfile/activeAccount/**").permitAll()
+				.antMatchers("/actuator/**").permitAll()
+				.anyRequest().authenticated()
+				.and()
+			.exceptionHandling()
+				.authenticationEntryPoint(authenticationEntryPoint)
 				.accessDeniedHandler(accessDeniedHandler);
 	}
 
