@@ -101,7 +101,6 @@
 			<version>${swagger.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		
 
 		<dependency>
 			<groupId>org.springframework.security</groupId>

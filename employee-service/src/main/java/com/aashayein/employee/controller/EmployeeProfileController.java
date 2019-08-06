@@ -34,15 +34,18 @@ import org.springframework.web.bind.annotation.RestController;
 import com.aashayein.employee.command.EditEmployeeProfileCommand;
 import com.aashayein.employee.command.PasswordCommand;
 import com.aashayein.employee.dto.EmployeeTO;
+import com.aashayein.employee.exception.BadRequestException;
 import com.aashayein.employee.exception.DatabindingException;
 import com.aashayein.employee.exception.EmployeeMobileNumberExistsException;
 import com.aashayein.employee.exception.EmployeeNotFoundException;
 import com.aashayein.employee.exception.InvalidTokenException;
 import com.aashayein.employee.exception.UploadingFailedException;
+import com.aashayein.employee.exception.UsernameNotFoundException;
 import com.aashayein.employee.propertyEditor.ReplaceSpaceEditor;
 import com.aashayein.employee.service.EmployeeProfileService;
 import com.aashayein.employee.service.EmployeeService;
 import com.aashayein.employee.util.TokenVerification;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -185,7 +188,7 @@ public class EmployeeProfileController {
 	@PostMapping(value = "/activeAccount/{token}")
 	public ResponseEntity<String> activeAccount(@PathVariable("token") String token,
 			@Valid @ModelAttribute PasswordCommand passwordCommand, BindingResult result)
-			throws DatabindingException, InvalidTokenException {
+			throws DatabindingException, InvalidTokenException, JsonProcessingException {
 
 		String message = null;
 		HttpStatus status = null;
@@ -220,19 +223,126 @@ public class EmployeeProfileController {
 			employeeTo.setTokenUUID(token);
 			employeeTo.setPassword(passwordCommand.getPassword());
 
-			// Set Profile Password
-			EmployeeTO employee = employeeProfileService.setPassword(employeeTo);
+			employeeProfileService.activeAccount(employeeTo);
 
-			if (employee == null) {
-				status = HttpStatus.BAD_REQUEST;
-				message = "Unable To Update Password";
-				log.info(message);
-			} else {
-				status = HttpStatus.OK;
-				message = "Password Updated Successfully For Employee Having EmployeeId: " + employee.getEmployeeId();
-				log.info(message);
-				log.info("Employee Activated Successfully For Employee Having EmployeeId: " + employee.getEmployeeId());
+			status = HttpStatus.OK;
+			message = "Password Updated Successfully";
+			log.info(message);
+		}
+
+		return new ResponseEntity<>(message, status);
+	}
+
+	// Reset Employee Password
+	@PostMapping(value = "/resetPassword/{token}")
+	public ResponseEntity<String> resetPassword(@PathVariable("token") String token,
+			@Valid @ModelAttribute PasswordCommand passwordCommand, BindingResult result)
+			throws DatabindingException, InvalidTokenException, JsonProcessingException {
+
+		String message = null;
+		HttpStatus status = null;
+
+		// Check data binding error
+		if (result.hasErrors()) {
+
+			List<String> messages = new ArrayList<String>();
+
+			// Log dataBinding errors
+			for (FieldError error : result.getFieldErrors()) {
+				log.error("Error In DataBinding For Field: " + error.getField() + ", FieldValue: "
+						+ error.getRejectedValue() + ", Message: " + error.getDefaultMessage());
+
+				messages.add(error.getDefaultMessage());
 			}
+
+			// Throw Databinding Exception with error messages
+			throw new DatabindingException(messages);
+
+		} else {
+
+			// Verify token and expired date
+			if (!tokenVerification.isValidToken(token, expirationTimeResetpassword)) {
+				log.error("Invalid Token");
+				throw new InvalidTokenException(token);
+			}
+
+			// Setting value in Employee Transfer Object
+			EmployeeTO employeeTo = new EmployeeTO();
+
+			employeeTo.setTokenUUID(token);
+			employeeTo.setPassword(passwordCommand.getPassword());
+
+			employeeProfileService.resetPassword(employeeTo);
+
+			status = HttpStatus.OK;
+			message = "Password Reseted Successfully";
+			log.info(message);
+		}
+
+		return new ResponseEntity<>(message, status);
+	}
+
+	// Send Activation Link
+	@GetMapping(value = "/sendActivationLink/{username}")
+	public ResponseEntity<String> sendActivationLink(@PathVariable("username") String username)
+			throws DatabindingException, UsernameNotFoundException, BadRequestException, JsonProcessingException {
+
+		String message = null;
+		HttpStatus status = null;
+
+		if (!username.matches("([A-Za-z0-9_\\-\\.])+\\@([A-Za-z0-9_\\-\\.])+\\.([A-Za-z]{2,4})")) {
+			List<String> messages = new ArrayList<String>();
+			log.error("Invalid Username");
+			messages.add("Invalid Username");
+
+			// Throw Databinding Exception with error messages
+			throw new DatabindingException(messages);
+		} else if (employeeService.getEmployeeByEmail(username) == null
+				|| employeeService.getEmployeeByEmail(username).getArchive().intValue() == 1) {
+			log.error("User Not Found");
+			throw new UsernameNotFoundException("User Not Found");
+		} else if (employeeService.getEmployeeByEmail(username).getActive().intValue() == 1) {
+			log.error("Profile already activated");
+			throw new BadRequestException("Profile already activated");
+		} else {
+			employeeProfileService.sendActivationLink(username);
+
+			status = HttpStatus.OK;
+			message = "An activation link has been sent to your registered MailId";
+			log.info("An activation link has been sent to MailId: " + username);
+		}
+
+		return new ResponseEntity<>(message, status);
+	}
+
+	// Send Reset Password Link
+	@GetMapping(value = "/sendResetPasswordLink/{username}")
+	public ResponseEntity<String> sendResetPasswordLink(@PathVariable("username") String username)
+			throws DatabindingException, UsernameNotFoundException, BadRequestException, JsonProcessingException {
+
+		String message = null;
+		HttpStatus status = null;
+
+		if (!username.matches("([A-Za-z0-9_\\-\\.])+\\@([A-Za-z0-9_\\-\\.])+\\.([A-Za-z]{2,4})")) {
+			List<String> messages = new ArrayList<String>();
+			log.error("Invalid Username");
+			messages.add("Invalid Username");
+
+			// Throw Databinding Exception with error messages
+			throw new DatabindingException(messages);
+		} else if (employeeService.getEmployeeByEmail(username) == null
+				|| employeeService.getEmployeeByEmail(username).getArchive().intValue() == 1) {
+			log.error("User Not Found");
+			throw new UsernameNotFoundException("User Not Found");
+		} else if (employeeService.getEmployeeByEmail(username).getActive().intValue() == 0) {
+			log.error("Profile not activated");
+			throw new BadRequestException("Profile not activated");
+		} else {
+			employeeProfileService.sendResetPasswordLink(username);
+
+			status = HttpStatus.OK;
+			message = "A reset link has been sent to your registered MailId";
+			log.info("A reset link has been sent to registered MailId: " + username);
 		}
 
 		return new ResponseEntity<>(message, status);

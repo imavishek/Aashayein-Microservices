@@ -1,10 +1,10 @@
 /**
  * @ProjectName: mail-service
  * @PackageName: com.aashayein.mail.rabbitMQ_listener
- * @FileName: RegistrationMailListener.java
+ * @FileName: ResetSuccessfulMailListener.java
  * @Author: Avishek Das
- * @CreatedDate: 29-06-2019
- * @Modified_By avishek.das @Last_On 29-Jun-2019 1:52:24 PM
+ * @CreatedDate: 05-08-2019
+ * @Modified_By avishek.das @Last_On 05-Aug-2019 11:28:19 PM
  */
 
 package com.aashayein.mail.rabbitMQ_listener;
@@ -14,8 +14,6 @@ import java.io.IOException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
@@ -30,44 +28,36 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-@RefreshScope
-public class RegistrationMailListener {
+public class ResetSuccessfulMailListener {
 
 	@Autowired
 	private MailUtil mailUtil;
 
-	@Value("${frontend.base-url}")
-	private String froentendBaseUrl;
-
-	@RabbitListener(queues = RabbitMQConfiguration.REGD_QUEUE)
+	@RabbitListener(queues = RabbitMQConfiguration.RESET_SUCCESSFUL_QUEUE)
 	public void sendMail(@Payload EmployeeTO employee, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag)
 			throws IOException {
-		log.info("Message (Registration Mail) Consumed Successfully. Message: " + employee.toString());
+		log.info("Message (Reset Successful Mail) Consumed Successfully. Message: " + employee.toString());
 
-		Boolean success = sendRegistrationSuccessMail(employee);
+		Boolean success = sendResetSuccessfulMail(employee);
 
 		if (success) {
 			channel.basicAck(tag, false);
-			log.info("Registration Mail Acknowledged");
+			log.info("Reset Successful Mail Acknowledged");
 		} else {
 			channel.basicReject(tag, true);
-			log.info("Do Not Discard (Requeue) Registration Mail");
+			log.info("Do Not Discard (Requeue) Reset Successful Mail");
 		}
 	}
 
-	private Boolean sendRegistrationSuccessMail(EmployeeTO employee) {
+	private Boolean sendResetSuccessfulMail(EmployeeTO employee) {
 
-		String confirmationUrl = null;
 		MailRequestTO mailRequestTo = new MailRequestTO();
-
-		confirmationUrl = froentendBaseUrl + "/setPassword?token=" + employee.getTokenUUID();
 
 		mailRequestTo.setRecipientName(employee.getFirstName());
 		mailRequestTo.setEmailTo(employee.getEmail());
-		mailRequestTo.setEmailSubject("Aashayein - Active Account");
+		mailRequestTo.setEmailSubject("Aashayein - Password Reset");
 		mailRequestTo.setEmailForm("aashayein2019@gmail.com");
-		mailRequestTo.setEmailTemplateName("registration-success.ftl");
-		mailRequestTo.setUrl(confirmationUrl);
+		mailRequestTo.setEmailTemplateName("reset-password-success.ftl");
 		mailRequestTo.setDetails(employee);
 
 		log.info("Mail Sending... Subject: " + mailRequestTo.getEmailSubject());

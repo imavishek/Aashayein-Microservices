@@ -18,6 +18,7 @@ import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistrar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.handler.annotation.support.DefaultMessageHandlerMethodFactory;
 import org.springframework.messaging.handler.annotation.support.MessageHandlerMethodFactory;
@@ -30,14 +31,19 @@ public class RabbitMQConfiguration implements RabbitListenerConfigurer {
 	public ConnectionFactory connectionFactory;
 
 	public static final String REGD_QUEUE = "regd-queue";
+	public static final String RESET_SUCCESSFUL_QUEUE = "reset-successful-queue";
+	public static final String ACTIVATION_SUCCESSFUL_QUEUE = "activation-successful-queue";
+	public static final String RESET_LINK_QUEUE = "reset-link-queue";
+	public static final String ACTIVATION_LINK_QUEUE = "activation-link-queue";
 
 	@Override
 	public void configureRabbitListeners(RabbitListenerEndpointRegistrar registrar) {
-		registrar.setMessageHandlerMethodFactory(messageHandlerMethodFactory());
+		registrar.setMessageHandlerMethodFactory(messageHandlerMethodFactoryBean());
 	}
 
 	@Bean
-	MessageHandlerMethodFactory messageHandlerMethodFactory() {
+	@Primary
+	MessageHandlerMethodFactory messageHandlerMethodFactoryBean() {
 		DefaultMessageHandlerMethodFactory messageHandlerMethodFactory = new DefaultMessageHandlerMethodFactory();
 		messageHandlerMethodFactory.setMessageConverter(consumerJackson2MessageConverter());
 		return messageHandlerMethodFactory;

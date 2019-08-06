@@ -11,13 +11,22 @@ package com.aashayein.employee.service;
 
 import com.aashayein.employee.dto.EmployeeTO;
 import com.aashayein.employee.exception.EmployeeMobileNumberExistsException;
+import com.aashayein.employee.exception.InvalidTokenException;
 import com.aashayein.employee.exception.UploadingFailedException;
+import com.aashayein.employee.exception.UsernameNotFoundException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public interface EmployeeProfileService {
 
 	EmployeeTO updateEmployeeProfile(EmployeeTO employeeTo)
 			throws EmployeeMobileNumberExistsException, UploadingFailedException;
 
-	EmployeeTO setPassword(EmployeeTO employeeTo);
+	void activeAccount(EmployeeTO employeeTo) throws InvalidTokenException, JsonProcessingException;
+
+	void resetPassword(EmployeeTO employeeTo) throws InvalidTokenException, JsonProcessingException;
+
+	void sendActivationLink(String username) throws UsernameNotFoundException, JsonProcessingException;
+
+	void sendResetPasswordLink(String username) throws UsernameNotFoundException, JsonProcessingException;
 
 }

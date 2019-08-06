@@ -18,17 +18,20 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import com.aashayein.employee.dto.ErrorResponse;
+import com.aashayein.employee.exception.BadRequestException;
 import com.aashayein.employee.exception.DatabindingException;
 import com.aashayein.employee.exception.EmployeeEmailExistsException;
 import com.aashayein.employee.exception.EmployeeMobileNumberExistsException;
 import com.aashayein.employee.exception.EmployeeNotFoundException;
 import com.aashayein.employee.exception.InvalidTokenException;
 import com.aashayein.employee.exception.SMTPException;
+import com.aashayein.employee.exception.UsernameNotFoundException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -74,6 +77,65 @@ public class GlobalExceptionHandler {
 		log.error(errorResponse.toString());
 
 		return new ResponseEntity<>(errorResponse, HttpStatus.METHOD_NOT_ALLOWED);
+	}
+
+	/* Missing Servlet Request Parameter Exception Handler */
+	@ExceptionHandler({ MissingServletRequestParameterException.class })
+	public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(
+			MissingServletRequestParameterException e, HttpServletRequest request) {
+
+		List<String> messages = new ArrayList<String>();
+		messages.add(e.getMessage());
+
+		ErrorResponse errorResponse = new ErrorResponse();
+		errorResponse.setTimestamp(LocalDateTime.now());
+		errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+		errorResponse.setError("Bad Request");
+		errorResponse.setMessage(messages);
+		errorResponse.setPath(request.getRequestURI());
+
+		log.error(errorResponse.toString());
+
+		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+	}
+
+	/* Username Not Found Exception Handler */
+	@ExceptionHandler({ UsernameNotFoundException.class })
+	public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException e,
+			HttpServletRequest request) {
+
+		List<String> messages = new ArrayList<String>();
+		messages.add(e.getMessage());
+
+		ErrorResponse errorResponse = new ErrorResponse();
+		errorResponse.setTimestamp(LocalDateTime.now());
+		errorResponse.setStatus(HttpStatus.NOT_FOUND.value());
+		errorResponse.setError("Not Found");
+		errorResponse.setMessage(messages);
+		errorResponse.setPath(request.getRequestURI());
+
+		log.error(errorResponse.toString());
+
+		return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+	}
+
+	/* Bad Request Exception Handler */
+	@ExceptionHandler({ BadRequestException.class })
+	public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException e, HttpServletRequest request) {
+
+		List<String> messages = new ArrayList<String>();
+		messages.add(e.getMessage());
+
+		ErrorResponse errorResponse = new ErrorResponse();
+		errorResponse.setTimestamp(LocalDateTime.now());
+		errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+		errorResponse.setError("Bad Request");
+		errorResponse.setMessage(messages);
+		errorResponse.setPath(request.getRequestURI());
+
+		log.error(errorResponse.toString());
+
+		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
 	}
 
 	/* Databinding Exception Handler */

@@ -1,10 +1,10 @@
 /**
  * @ProjectName: mail-service
  * @PackageName: com.aashayein.mail.rabbitMQ_listener
- * @FileName: RegistrationMailListener.java
+ * @FileName: ActivationLinkMailListener.java
  * @Author: Avishek Das
- * @CreatedDate: 29-06-2019
- * @Modified_By avishek.das @Last_On 29-Jun-2019 1:52:24 PM
+ * @CreatedDate: 05-08-2019
+ * @Modified_By avishek.das @Last_On 05-Aug-2019 11:27:30 PM
  */
 
 package com.aashayein.mail.rabbitMQ_listener;
@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 @RefreshScope
-public class RegistrationMailListener {
+public class ActivationLinkMailListener {
 
 	@Autowired
 	private MailUtil mailUtil;
@@ -39,34 +39,34 @@ public class RegistrationMailListener {
 	@Value("${frontend.base-url}")
 	private String froentendBaseUrl;
 
-	@RabbitListener(queues = RabbitMQConfiguration.REGD_QUEUE)
+	@RabbitListener(queues = RabbitMQConfiguration.ACTIVATION_LINK_QUEUE)
 	public void sendMail(@Payload EmployeeTO employee, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long tag)
 			throws IOException {
-		log.info("Message (Registration Mail) Consumed Successfully. Message: " + employee.toString());
+		log.info("Message (Activation Link Mail) Consumed Successfully. Message: " + employee.toString());
 
-		Boolean success = sendRegistrationSuccessMail(employee);
+		Boolean success = sendActivationLinkMail(employee);
 
 		if (success) {
 			channel.basicAck(tag, false);
-			log.info("Registration Mail Acknowledged");
+			log.info("Activation Link Mail Acknowledged");
 		} else {
 			channel.basicReject(tag, true);
-			log.info("Do Not Discard (Requeue) Registration Mail");
+			log.info("Do Not Discard (Requeue) Activation Link Mail");
 		}
 	}
 
-	private Boolean sendRegistrationSuccessMail(EmployeeTO employee) {
+	private Boolean sendActivationLinkMail(EmployeeTO employee) {
 
 		String confirmationUrl = null;
 		MailRequestTO mailRequestTo = new MailRequestTO();
 
-		confirmationUrl = froentendBaseUrl + "/setPassword?token=" + employee.getTokenUUID();
+		confirmationUrl = froentendBaseUrl + "/activeAccount?token=" + employee.getTokenUUID();
 
 		mailRequestTo.setRecipientName(employee.getFirstName());
 		mailRequestTo.setEmailTo(employee.getEmail());
 		mailRequestTo.setEmailSubject("Aashayein - Active Account");
 		mailRequestTo.setEmailForm("aashayein2019@gmail.com");
-		mailRequestTo.setEmailTemplateName("registration-success.ftl");
+		mailRequestTo.setEmailTemplateName("activation-link.ftl");
 		mailRequestTo.setUrl(confirmationUrl);
 		mailRequestTo.setDetails(employee);
 

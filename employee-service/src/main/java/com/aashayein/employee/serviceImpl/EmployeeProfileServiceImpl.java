@@ -9,7 +9,10 @@
 
 package com.aashayein.employee.serviceImpl;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,13 +25,21 @@ import com.aashayein.employee.entities.EmployeeRole;
 import com.aashayein.employee.entities.EmployeeTitle;
 import com.aashayein.employee.entities.State;
 import com.aashayein.employee.exception.EmployeeMobileNumberExistsException;
+import com.aashayein.employee.exception.InvalidTokenException;
 import com.aashayein.employee.exception.UploadingFailedException;
+import com.aashayein.employee.exception.UsernameNotFoundException;
+import com.aashayein.employee.rabbitMQ_sender.ActivationLinkMailSender;
+import com.aashayein.employee.rabbitMQ_sender.ActivationSuccessfulMailSender;
+import com.aashayein.employee.rabbitMQ_sender.ResetLinkMailSender;
+import com.aashayein.employee.rabbitMQ_sender.ResetSuccessfulMailSender;
 import com.aashayein.employee.repository.EmployeeAddressRepository;
 import com.aashayein.employee.repository.EmployeeRepository;
 import com.aashayein.employee.service.EmployeeProfileService;
 import com.aashayein.employee.service.EmployeeService;
 import com.aashayein.employee.util.ConvertEntityToTransferObject;
+import com.aashayein.employee.util.DateTime;
 import com.aashayein.employee.util.FileUploadUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,16 +51,34 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
 	private EmployeeRepository employeeRepository;
 
 	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	@Autowired
 	private EmployeeAddressRepository employeeAddressRepository;
 
 	@Autowired
 	private EmployeeService employeeService;
 
 	@Autowired
+	DateTime dateTime;
+
+	@Autowired
 	private FileUploadUtil fileUploadUtil;
 
 	@Autowired
 	private ConvertEntityToTransferObject convertEntityToTransferObject;
+
+	@Autowired
+	private ResetSuccessfulMailSender resetSuccessfulMailSender;
+
+	@Autowired
+	private ActivationSuccessfulMailSender activationSuccessfulMailSender;
+
+	@Autowired
+	private ResetLinkMailSender resetLinkMailSender;
+
+	@Autowired
+	private ActivationLinkMailSender activationLinkMailSender;
 
 	@Override
 	@Transactional
@@ -151,8 +180,106 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
 
 	@Override
 	@Transactional
-	public EmployeeTO setPassword(EmployeeTO employeeTo) {
-		return null;
+	public void activeAccount(EmployeeTO employeeTo) throws InvalidTokenException, JsonProcessingException {
+
+		Employee employee = null;
+
+		employee = employeeRepository.findByTokenUUID(employeeTo.getTokenUUID());
+
+		if (employee == null) {
+			log.error("Invalid token to active account: " + employeeTo.getTokenUUID());
+			throw new InvalidTokenException(employeeTo.getTokenUUID());
+		}
+
+		setPassword(employeeTo);
+
+		log.info("Employee Activated Successfully For Employee Having EmployeeId: " + employee.getEmployeeId());
+
+		activationSuccessfulMailSender.sendMail(convertEntityToTransferObject.convertEmployeeToEmployeeTO(employee));
+	}
+
+	@Override
+	@Transactional
+	public void resetPassword(EmployeeTO employeeTo) throws InvalidTokenException, JsonProcessingException {
+
+		Employee employee = null;
+
+		employee = employeeRepository.findByTokenUUID(employeeTo.getTokenUUID());
+
+		if (employee == null) {
+			log.error("Invalid token to reset passsword: " + employeeTo.getTokenUUID());
+			throw new InvalidTokenException(employeeTo.getTokenUUID());
+		}
+
+		setPassword(employeeTo);
+
+		log.info("Password Reseted Successfully For Employee Having EmployeeId: " + employee.getEmployeeId());
+
+		resetSuccessfulMailSender.sendMail(convertEntityToTransferObject.convertEmployeeToEmployeeTO(employee));
+	}
+
+	@Override
+	@Transactional
+	public void sendActivationLink(String username) throws UsernameNotFoundException, JsonProcessingException {
+		Employee employee = null;
+		EmployeeTO employeeTo = null;
+
+		employee = employeeRepository.findByEmail(username);
+
+		if (employee == null) {
+			log.error("User Not Found");
+			throw new UsernameNotFoundException("User Not Found");
+		}
+
+		employee.setTokenUUID(UUID.randomUUID().toString());
+		employee.setTokenGeneratedDate(dateTime.getCurrentDateTime());
+
+		employee = employeeRepository.save(employee);
+
+		employeeTo = convertEntityToTransferObject.convertEmployeeToEmployeeTO(employee);
+		employeeTo.setTokenUUID(employee.getTokenUUID());
+		employeeTo.setTokenGeneratedDate(employee.getTokenGeneratedDate());
+
+		activationLinkMailSender.sendMail(employeeTo);
+
+	}
+
+	@Override
+	@Transactional
+	public void sendResetPasswordLink(String username) throws UsernameNotFoundException, JsonProcessingException {
+		Employee employee = null;
+		EmployeeTO employeeTo = null;
+
+		employee = employeeRepository.findByEmail(username);
+
+		if (employee == null) {
+			log.error("User Not Found");
+			throw new UsernameNotFoundException("User Not Found");
+		}
+
+		employee.setTokenUUID(UUID.randomUUID().toString());
+		employee.setTokenGeneratedDate(dateTime.getCurrentDateTime());
+
+		employee = employeeRepository.save(employee);
+
+		employeeTo = convertEntityToTransferObject.convertEmployeeToEmployeeTO(employee);
+		employeeTo.setTokenUUID(employee.getTokenUUID());
+		employeeTo.setTokenGeneratedDate(employee.getTokenGeneratedDate());
+
+		resetLinkMailSender.sendMail(employeeTo);
+
+	}
+
+	private void setPassword(EmployeeTO employeeTo) {
+		Employee employee = null;
+
+		employee = employeeRepository.findByTokenUUID(employeeTo.getTokenUUID());
+		employee.setPassword(passwordEncoder.encode(employeeTo.getPassword()));
+		employee.setTokenUUID(null);
+		employee.setTokenGeneratedDate(null);
+
+		employeeRepository.save(employee);
+
 	}
 
 }
